@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendita Libri Usati</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+        }
+        .container {
+            padding: 2em;
+        }
+        .form-group {
+            margin-bottom: 1em;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.5em;
+            box-sizing: border-box;
+        }
+        .form-group button {
+            padding: 0.7em;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #555;
+        }
+        .chat {
+            margin-top: 2em;
+        }
+        .chat textarea {
+            width: 100%;
+            height: 100px;
+            padding: 0.5em;
+            box-sizing: border-box;
+        }
+        .stock {
+            margin-top: 2em;
+        }
+        .stock table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .stock th, .stock td {
+            border: 1px solid #ddd;
+            padding: 0.5em;
+            text-align: left;
+        }
+        .stock th {
+            background-color: #333;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Vendita Libri Usati</h1>
+    </header>
+    <div class="container">
+        <h2>Registrazione</h2>
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="firstName">Nome</label>
+                <input type="text" id="firstName" name="firstName" required>
+            </div>
+            <div class="form-group">
+                <label for="lastName">Cognome</label>
+                <input type="text" id="lastName" name="lastName" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Numero di Telefono</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Registrati</button>
+            </div>
+        </form>
+
+        <h2>Aggiungi Libro</h2>
+        <form id="addBookForm">
+            <div class="form-group">
+                <label for="isbn">Codice ISBN</label>
+                <input type="text" id="isbn" name="isbn" required>
+            </div>
+            <div class="form-group">
+                <label for="coverPhoto">Foto della Copertina</label>
+                <input type="text" id="coverPhoto" name="coverPhoto" readonly>
+            </div>
+            <div class="form-group">
+                <label for="condition">Condizioni del Libro</label>
+                <select id="condition" name="condition" required>
+                    <option value="new">Nuovo</option>
+                    <option value="like-new">Come Nuovo</option>
+                    <option value="good">Buono</option>
+                    <option value="acceptable">Accettabile</option>
+                    <option value="poor">Pessimo</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit">Aggiungi Libro</button>
+            </div>
+        </form>
+
+        <h2>Chat</h2>
+        <div class="chat">
+            <textarea id="chatBox" placeholder="Scrivi un messaggio..."></textarea>
+        </div>
+
+        <h2>Stock Libri</h2>
+        <div class="stock">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ISBN</th>
+                        <th>Titolo</th>
+                        <th>Condizione</th>
+                        <th>Prezzo</th>
+                    </tr>
+                </thead>
+                <tbody id="stockTableBody">
+                    <!-- Libri verranno aggiunti qui -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registrationForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('Registrazione completata!');
+        });
+
+        document.getElementById('addBookForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const isbn = document.getElementById('isbn').value;
+            const condition = document.getElementById('condition').value;
+            const coverPhoto = 'https://via.placeholder.com/150';  // Sostituire con API per ottenere la copertina
+            const originalPrice = 100;  // Sostituire con API per ottenere il prezzo originale
+            let price1 = originalPrice * 0.6;
+
+            // Chiedi informazioni sulle condizioni del libro
+            const hasPlasticCover = confirm('Il libro ha una copertina di plastica? (OK per Sì, Annulla per No)');
+            if (!hasPlasticCover) price1 -= price1 * 0.10;
+
+            const hasIntactHardCover = confirm('La copertina rigida del libro è intatta? (OK per Sì, Annulla per No)');
+            if (!hasIntactHardCover) price1 -= price1 * 0.10;
+
+            const hasTornPages = confirm('Il libro ha pagine strappate? (OK per Tanto, Annulla per No)');
+            if (hasTornPages) price1 -= price1 * 0.10;
+
+            const hasSlightlyTornPages = confirm('Il libro ha pagine leggermente strappate? (OK per Poco, Annulla per No)');
+            if (hasSlightlyTornPages && !hasTornPages) price1 -= price1 * 0.05;
+
+            const hasHighlightedPages = confirm('Il libro ha pagine evidenziate? (OK per Tanto, Annulla per No)');
+            if (hasHighlightedPages) price1 -= price1 * 0.10;
+
+            const hasSlightlyHighlightedPages = confirm('Il libro ha pagine leggermente evidenziate? (OK per Poco, Annulla per No)');
+            if (hasSlightlyHighlightedPages && !hasHighlightedPages) price1 -= price1 * 0.05;
+
+            const hasPenMarks = confirm('Il libro ha scritte in penna? (OK per Tanto, Annulla per No)');
+            if (hasPenMarks) price1 -= price1 * 0.15;
+
+            const hasSlightPenMarks = confirm('Il libro ha scritte in penna leggere? (OK per Poco, Annulla per No)');
+            if (hasSlightPenMarks && !hasPenMarks) price1 -= price1 * 0.10;
+
+            const hasStains = confirm('Il libro ha pagine rovinate da macchie? (OK per Tanto, Annulla per No)');
+            if (hasStains) price1 -= price1 * 0.15;
+
+            const hasSlightStains = confirm('Il libro ha pagine leggermente rovinate da macchie? (OK per Poco, Annulla per No)');
+            if (hasSlightStains && !hasStains) price1 -= price1 * 0.10;
+
+            const price = price1.toFixed(2);
+
+            // Aggiungi il libro allo stock
+            const stockTableBody = document.getElementById('stockTableBody');
+            const row = stockTableBody.insertRow();
+            row.insertCell(0).innerText = isbn;
+            row.insertCell(1).innerText = 'Titolo' + isbn;  // Sostituire con titolo del libro ottenuto tramite API
+            row.insertCell(2).innerText = condition;
+            row.insertCell(3).innerText = price + ' €';
+
+            alert('Libro aggiunto con successo!');
+        });
+    </script>
+</body>
+</html>
